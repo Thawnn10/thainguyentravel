@@ -1,0 +1,2905 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#e8f5f0" />
+    <title>Thái Nguyên Travel — Cẩm Nang Du Lịch</title>
+
+    <style>
+        /* =========================================================
+   0. RESET & BIẾN TOÀN CỤC
+   ========================================================= */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --text: #0A0F1C;
+            --text-strong: #05080F;
+            --text-sub: #2A3547;
+            --text-muted: #5A6577;
+
+            --blur-light: blur(18px) saturate(200%) brightness(1.06);
+            --blur-mid: blur(28px) saturate(220%) brightness(1.08);
+            --blur-strong: blur(40px) saturate(240%) brightness(1.10);
+            --blur-ultra: blur(56px) saturate(260%) brightness(1.12);
+
+            --border-glass: 1px solid rgba(255, 255, 255, 0.6);
+            --border-glass-lt: 1px solid rgba(255, 255, 255, 0.85);
+
+            --radius: 22px;
+            --radius-sm: 16px;
+
+            --accent: #0d9488;
+            --accent-2: #16a34a;
+            --accent-soft: rgba(13, 148, 136, 0.14);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text);
+            line-height: 1.65;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-color: #cfe8dd;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* =========================================================
+   1. HỆ THỐNG NỀN — TINH GỌN, KHÔNG HỌA TIẾT THỪA
+   ========================================================= */
+        .bg-image {
+            position: fixed;
+            inset: 0;
+            z-index: -4;
+            pointer-events: none;
+            background-image: url('back.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #cfe8dd;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            pointer-events: none;
+            background:
+                radial-gradient(60% 60% at 18% 18%, rgba(255, 255, 255, .62) 0%, rgba(255, 255, 255, .28) 45%, transparent 78%),
+                radial-gradient(55% 55% at 85% 82%, rgba(255, 255, 255, .55) 0%, rgba(255, 255, 255, .22) 50%, transparent 82%),
+                linear-gradient(180deg, rgba(255, 255, 255, .32) 0%, rgba(255, 255, 255, .18) 40%, rgba(255, 255, 255, .42) 100%);
+            backdrop-filter: blur(3px) saturate(120%);
+            -webkit-backdrop-filter: blur(3px) saturate(120%);
+        }
+
+        .bg-tint {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            background:
+                radial-gradient(45% 45% at 12% 18%, rgba(16, 185, 129, .13) 0%, transparent 62%),
+                radial-gradient(42% 42% at 88% 12%, rgba(245, 158, 11, .11) 0%, transparent 62%),
+                radial-gradient(42% 42% at 78% 88%, rgba(56, 189, 248, .09) 0%, transparent 62%);
+            mix-blend-mode: multiply;
+        }
+
+        /* Đã lược bỏ .bg-glow và .bg-noise để làm sạch nền */
+
+        /* =========================================================
+   2. LIQUID GLASS CORE (tinh gọn — không viền/họa tiết thừa)
+   ========================================================= */
+        .glass,
+        .glass-strong,
+        .glass-soft {
+            position: relative;
+            isolation: isolate;
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: box-shadow .4s ease, border-color .4s ease,
+                background .4s ease, transform .4s ease;
+        }
+
+        .glass {
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.80) 0%,
+                    rgba(255, 255, 255, 0.62) 42%,
+                    rgba(255, 255, 255, 0.72) 100%);
+            backdrop-filter: var(--blur-mid);
+            -webkit-backdrop-filter: var(--blur-mid);
+            border: var(--border-glass);
+            box-shadow:
+                0 12px 40px -8px rgba(31, 38, 135, 0.16),
+                0 4px 12px -2px rgba(31, 38, 135, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        }
+
+        .glass-strong {
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.94) 0%,
+                    rgba(255, 255, 255, 0.84) 42%,
+                    rgba(255, 255, 255, 0.90) 100%);
+            backdrop-filter: var(--blur-strong);
+            -webkit-backdrop-filter: var(--blur-strong);
+            border: var(--border-glass-lt);
+            box-shadow:
+                0 16px 48px -10px rgba(31, 38, 135, 0.18),
+                0 6px 16px -4px rgba(31, 38, 135, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 1);
+        }
+
+        .glass-soft {
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.78) 0%,
+                    rgba(255, 255, 255, 0.62) 50%,
+                    rgba(255, 255, 255, 0.72) 100%);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            border: var(--border-glass);
+            box-shadow:
+                0 8px 24px -6px rgba(31, 38, 135, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.85);
+        }
+
+        .glass>*,
+        .glass-strong>*,
+        .glass-soft>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .text-sharp {
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        /* =========================================================
+   3. LAYOUT CHUNG
+   ========================================================= */
+        .container {
+            width: min(1240px, 100% - 32px);
+            margin-inline: auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        section {
+            padding: 72px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-head {
+            margin-bottom: 32px;
+        }
+
+        .section-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #0b6b5f;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.75));
+            border: none;
+            padding: 7px 16px;
+            border-radius: 999px;
+            margin-bottom: 12px;
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.95),
+                0 4px 12px rgba(13, 148, 136, 0.14);
+        }
+
+        .section-title {
+            font-size: clamp(1.6rem, 3.4vw, 2.35rem);
+            font-weight: 900;
+            color: var(--text-strong);
+            letter-spacing: -0.022em;
+            line-height: 1.2;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .section-sub {
+            color: var(--text-sub);
+            font-size: 1rem;
+            max-width: 720px;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        /* =========================================================
+   4. BUTTON
+   ========================================================= */
+        .btn {
+            position: relative;
+            isolation: isolate;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 46px;
+            padding: 0 22px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            font-family: inherit;
+            color: var(--text-strong);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.82));
+            border: var(--border-glass-lt);
+            border-radius: 999px;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 4px 14px rgba(31, 38, 135, 0.14),
+                0 12px 28px rgba(31, 38, 135, 0.10);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            cursor: pointer;
+            transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.28s ease,
+                background 0.28s ease;
+            text-decoration: none;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.75) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.7s ease;
+            pointer-events: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 8px 24px rgba(31, 38, 135, 0.20),
+                0 20px 44px rgba(31, 38, 135, 0.16);
+        }
+
+        .btn:hover::after {
+            transform: translateX(100%);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-accent {
+            color: #ffffff;
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.98) 0%, rgba(22, 163, 74, 0.98) 100%);
+            border: none;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.55),
+                0 6px 20px rgba(13, 148, 136, 0.42),
+                0 16px 40px rgba(13, 148, 136, 0.26);
+        }
+
+        .btn-accent::after {
+            background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%);
+        }
+
+        /* =========================================================
+   5. NAVBAR
+   ========================================================= */
+        .navbar {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(1240px, calc(100% - 32px));
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 10px 12px 10px 14px;
+
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.92) 0%,
+                    rgba(255, 255, 255, 0.78) 50%,
+                    rgba(255, 255, 255, 0.86) 100%);
+            backdrop-filter: var(--blur-strong);
+            -webkit-backdrop-filter: var(--blur-strong);
+            border: var(--border-glass-lt);
+            border-radius: 24px;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 4px 16px rgba(31, 38, 135, 0.10),
+                0 16px 40px rgba(31, 38, 135, 0.16);
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* =========================================================
+   6. NÚT QUAY VỀ TRANG CHỦ
+   ========================================================= */
+        .home-return-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 42px;
+            padding: 0 16px;
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0.005em;
+            color: #0b6b5f;
+            text-decoration: none;
+            white-space: nowrap;
+
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.88) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.98);
+            border-radius: 999px;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 3px 10px rgba(13, 148, 136, 0.16);
+            transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.24s ease,
+                background 0.24s ease;
+            overflow: hidden;
+        }
+
+        .home-return-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.85) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.7s ease;
+            pointer-events: none;
+        }
+
+        .home-return-btn:hover {
+            transform: translateY(-2px);
+            color: #0a5f55;
+            background: #ffffff;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 18px rgba(13, 148, 136, 0.32),
+                0 12px 32px rgba(31, 38, 135, 0.16);
+        }
+
+        .home-return-btn:hover::after {
+            transform: translateX(100%);
+        }
+
+        .home-return-btn svg {
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .home-return-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-strong);
+            flex-shrink: 0;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.98), rgba(22, 163, 74, 0.98));
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.55),
+                0 8px 20px rgba(13, 148, 136, 0.42);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .brand-text strong {
+            font-size: 1rem;
+            font-weight: 900;
+            letter-spacing: -0.015em;
+            color: var(--text-strong);
+        }
+
+        .brand-text span {
+            font-size: 0.68rem;
+            color: var(--text-sub);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-links a {
+            display: block;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-decoration: none;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            transition: all 0.28s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-strong);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.88));
+            border-color: rgba(255, 255, 255, 0.95);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 4px 14px rgba(31, 38, 135, 0.12);
+        }
+
+        .nav-cta {
+            flex-shrink: 0;
+        }
+
+        .hamburger {
+            display: none;
+            width: 46px;
+            height: 46px;
+            border: var(--border-glass-lt);
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.85));
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            cursor: pointer;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 4px 12px rgba(31, 38, 135, 0.14);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            border-radius: 2px;
+            background: var(--text-strong);
+            transition: 0.3s ease;
+        }
+
+        .hamburger.open span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* =========================================================
+   7. DRAWER MOBILE
+   ========================================================= */
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: min(320px, 86vw);
+            height: 100dvh;
+            z-index: 200;
+            padding: 90px 22px 32px;
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+            backdrop-filter: var(--blur-ultra);
+            -webkit-backdrop-filter: var(--blur-ultra);
+            border-left: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: -24px 0 64px rgba(31, 38, 135, 0.24);
+            transform: translateX(105%);
+            transition: transform 0.42s cubic-bezier(0.32, 0.72, 0.28, 1);
+            display: none;
+        }
+
+        .drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .drawer a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 52px;
+            padding: 0 18px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-strong);
+            text-decoration: none;
+            border-radius: 16px;
+            border: 1px solid transparent;
+            transition: 0.25s ease;
+        }
+
+        .drawer a:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.9));
+            border-color: rgba(255, 255, 255, 0.98);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 20px rgba(31, 38, 135, 0.14);
+        }
+
+        .drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 190;
+            background: rgba(15, 23, 42, 0.35);
+            backdrop-filter: blur(8px) saturate(140%);
+            -webkit-backdrop-filter: blur(8px) saturate(140%);
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.32s ease;
+        }
+
+        .drawer-backdrop.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* =========================================================
+   8. BOTTOM NAV
+   ========================================================= */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            z-index: 150;
+            padding: 8px 6px;
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.85) 100%);
+            backdrop-filter: var(--blur-ultra);
+            -webkit-backdrop-filter: var(--blur-ultra);
+            border: var(--border-glass-lt);
+            border-radius: 24px;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 8px 32px rgba(31, 38, 135, 0.24);
+            padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+        }
+
+        .bottom-nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            min-width: 64px;
+            min-height: 52px;
+            padding: 6px 10px;
+            border-radius: 16px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: var(--text-sub);
+            text-decoration: none;
+            transition: 0.25s ease;
+        }
+
+        .bottom-nav a .ico {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .bottom-nav a.active {
+            color: var(--accent);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.9));
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 4px 16px rgba(13, 148, 136, 0.24);
+        }
+
+        /* =========================================================
+   9. HERO — KHUNG SẠCH, KHÔNG VIỀN/HỌA TIẾT TRANG TRÍ
+   ========================================================= */
+        .hero {
+            padding-top: 132px;
+            padding-bottom: 48px;
+        }
+
+        /* ĐÃ LOẠI BỎ NỀN TRẮNG: hero-inner giờ trong suốt hoàn toàn */
+        .hero-inner {
+            position: relative;
+            padding: 56px clamp(22px, 4vw, 64px);
+            border-radius: 30px;
+            text-align: center;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border: none;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .hero-badge {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #0b6b5f;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.88));
+            border: none;
+            padding: 8px 18px;
+            border-radius: 999px;
+            margin-bottom: 22px;
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 16px rgba(13, 148, 136, 0.18);
+        }
+
+        .hero h1 {
+            position: relative;
+            font-size: clamp(1.8rem, 5vw, 3.4rem);
+            font-weight: 900;
+            line-height: 1.15;
+            letter-spacing: -0.032em;
+            color: var(--text-strong);
+            max-width: 950px;
+            margin: 0 auto 18px;
+            text-shadow: 0 2px 12px rgba(255, 255, 255, 0.9), 0 1px 0 rgba(255, 255, 255, 0.85);
+        }
+
+        .hero h1 .line-1 {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .hero h1 .grad {
+            display: block;
+            background: linear-gradient(120deg, #0a7a6e 0%, #15803d 55%, #4d7c0f 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-desc {
+            position: relative;
+            color: var(--text-sub);
+            font-size: clamp(0.95rem, 1.6vw, 1.08rem);
+            max-width: 700px;
+            margin: 0 auto 34px;
+            font-weight: 500;
+            text-shadow: 0 1px 6px rgba(255, 255, 255, 0.85);
+        }
+
+        /* 3 CARD THỐNG KÊ — LUÔN 1 HÀNG NGANG TRÊN DESKTOP */
+        .hero-stats {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            max-width: 900px;
+            margin: 0 auto 34px;
+        }
+
+        .stat-card {
+            position: relative;
+            padding: 24px 18px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.90) 100%);
+            backdrop-filter: var(--blur-mid);
+            -webkit-backdrop-filter: var(--blur-mid);
+            border: none;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 20px rgba(31, 38, 135, 0.10),
+                0 16px 40px rgba(31, 38, 135, 0.08);
+            transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.32s ease;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 12px 32px rgba(13, 148, 136, 0.22),
+                0 28px 64px rgba(31, 38, 135, 0.16);
+        }
+
+        .stat-value {
+            position: relative;
+            font-size: clamp(1.3rem, 2.6vw, 1.8rem);
+            font-weight: 900;
+            color: #0a7a6e;
+            letter-spacing: -0.022em;
+            line-height: 1.15;
+        }
+
+        .stat-label {
+            position: relative;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            margin-top: 8px;
+            line-height: 1.45;
+        }
+
+        .search-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 660px;
+            margin: 0 auto;
+            padding: 8px 8px 8px 22px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.99) 0%, rgba(255, 255, 255, 0.92) 100%);
+            backdrop-filter: var(--blur-mid);
+            -webkit-backdrop-filter: var(--blur-mid);
+            border: none;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 20px rgba(31, 38, 135, 0.12),
+                0 18px 44px rgba(31, 38, 135, 0.10);
+        }
+
+        .search-wrap .ico {
+            font-size: 1.1rem;
+            opacity: 0.7;
+        }
+
+        .search-wrap input {
+            flex: 1;
+            min-width: 0;
+            height: 48px;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 0.98rem;
+            font-weight: 500;
+            color: var(--text-strong);
+        }
+
+        .search-wrap input::placeholder {
+            color: #8894a8;
+            font-weight: 500;
+        }
+
+        .search-wrap .btn {
+            min-height: 48px;
+            padding: 0 26px;
+        }
+
+        /* =========================================================
+   10. FILTER BAR
+   ========================================================= */
+        .filter-bar {
+            position: relative;
+            display: flex;
+            gap: 10px;
+            padding: 12px;
+            margin-bottom: 30px;
+            border-radius: 999px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.78) 100%);
+            backdrop-filter: var(--blur-mid);
+            -webkit-backdrop-filter: var(--blur-mid);
+            border: var(--border-glass-lt);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 20px rgba(31, 38, 135, 0.10),
+                0 16px 40px rgba(31, 38, 135, 0.08);
+        }
+
+        .filter-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip {
+            position: relative;
+            flex: 0 0 auto;
+            min-height: 46px;
+            padding: 0 22px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: var(--text-sub);
+            white-space: nowrap;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.88));
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 2px 8px rgba(31, 38, 135, 0.08);
+            overflow: hidden;
+        }
+
+        .chip:hover {
+            color: var(--text-strong);
+            transform: translateY(-2px);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 18px rgba(31, 38, 135, 0.18);
+        }
+
+        .chip.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, #0d9488 0%, #16a34a 100%);
+            border-color: transparent;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.6),
+                0 8px 22px rgba(13, 148, 136, 0.44),
+                0 16px 40px rgba(13, 148, 136, 0.22);
+        }
+
+        /* =========================================================
+   11. DESTINATION GRID + CARDS
+   ========================================================= */
+        .dest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-radius: var(--radius);
+            background: linear-gradient(160deg,
+                    rgba(255, 255, 255, 0.96) 0%,
+                    rgba(255, 255, 255, 0.86) 55%,
+                    rgba(255, 255, 255, 0.92) 100%);
+            backdrop-filter: var(--blur-mid);
+            -webkit-backdrop-filter: var(--blur-mid);
+            border: 1px solid rgba(255, 255, 255, 0.92);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 20px rgba(31, 38, 135, 0.12),
+                0 18px 44px rgba(31, 38, 135, 0.10);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.4s ease;
+            cursor: pointer;
+        }
+
+        .card>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 12px 32px rgba(13, 148, 136, 0.26),
+                0 32px 72px rgba(31, 38, 135, 0.22);
+        }
+
+        .card-media {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        }
+
+        .card-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .card:hover .card-media img {
+            transform: scale(1.08);
+        }
+
+        .card-media::after {
+            content: '';
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 70%;
+            background: linear-gradient(to top,
+                    rgba(0, 0, 0, 0.82) 0%,
+                    rgba(0, 0, 0, 0.45) 50%,
+                    transparent 100%);
+            pointer-events: none;
+        }
+
+        .card-tag {
+            position: absolute;
+            left: 14px;
+            bottom: 14px;
+            z-index: 2;
+            padding: 7px 15px;
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.22);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 999px;
+            backdrop-filter: blur(14px) saturate(200%);
+            -webkit-backdrop-filter: blur(14px) saturate(200%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.45),
+                0 4px 12px rgba(0, 0, 0, 0.28);
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .card-body {
+            padding: 20px 20px 22px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg,
+                    rgba(255, 255, 255, 0.15) 0%,
+                    rgba(255, 255, 255, 0.55) 100%);
+        }
+
+        .card-body h3 {
+            font-size: 1.08rem;
+            font-weight: 900;
+            color: var(--text-strong);
+            letter-spacing: -0.012em;
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .card-body p {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            line-height: 1.65;
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+            margin-top: 15px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(15, 23, 42, 0.12);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-sub);
+        }
+
+        .card-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            font-size: 0.83rem;
+            font-weight: 900;
+            color: #0a7a6e;
+            letter-spacing: 0.01em;
+        }
+
+        .card-cta::after {
+            content: '→';
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .card:hover .card-cta::after {
+            transform: translateX(5px);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            padding: 58px 24px;
+            text-align: center;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.84));
+            backdrop-filter: var(--blur-mid);
+            -webkit-backdrop-filter: var(--blur-mid);
+            border: var(--border-glass-lt);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 8px 32px rgba(31, 38, 135, 0.12);
+        }
+
+        .empty-state .emoji {
+            font-size: 2.4rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+
+        /* =========================================================
+   12. ROUTE CARDS
+   ========================================================= */
+        .routes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 24px;
+        }
+
+        .route-card {
+            position: relative;
+            padding: 28px 26px;
+            border-radius: var(--radius);
+            background: linear-gradient(160deg,
+                    rgba(255, 255, 255, 0.96) 0%,
+                    rgba(255, 255, 255, 0.86) 60%,
+                    rgba(255, 255, 255, 0.92) 100%);
+            backdrop-filter: var(--blur-mid);
+            -webkit-backdrop-filter: var(--blur-mid);
+            border: 1px solid rgba(255, 255, 255, 0.92);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 20px rgba(31, 38, 135, 0.12),
+                0 18px 44px rgba(31, 38, 135, 0.10);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.4s ease;
+            overflow: hidden;
+        }
+
+        .route-card:hover {
+            transform: translateY(-8px);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 12px 32px rgba(13, 148, 136, 0.26),
+                0 32px 72px rgba(31, 38, 135, 0.20);
+        }
+
+        .route-head {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .route-icon {
+            flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            display: grid;
+            place-items: center;
+            font-size: 1.4rem;
+            border-radius: 17px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.82));
+            border: 1px solid rgba(255, 255, 255, 0.98);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 16px rgba(13, 148, 136, 0.20);
+        }
+
+        .route-head h3 {
+            font-size: 1.12rem;
+            font-weight: 900;
+            line-height: 1.32;
+            color: var(--text-strong);
+            letter-spacing: -0.012em;
+        }
+
+        .route-head p {
+            font-size: 0.84rem;
+            color: var(--text-sub);
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .timeline {
+            position: relative;
+            list-style: none;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 9px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            border-radius: 2px;
+            background: linear-gradient(to bottom,
+                    rgba(13, 148, 136, 0.85) 0%,
+                    rgba(13, 148, 136, 0.4) 60%,
+                    rgba(22, 163, 74, 0.25) 100%);
+            box-shadow: 0 0 8px rgba(13, 148, 136, 0.3);
+        }
+
+        .timeline li {
+            position: relative;
+            padding-bottom: 22px;
+        }
+
+        .timeline li:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline li::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.9));
+            border: 3px solid var(--accent);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 0 0 4px rgba(13, 148, 136, 0.16),
+                0 2px 8px rgba(13, 148, 136, 0.35);
+        }
+
+        .timeline .step-title {
+            font-size: 0.95rem;
+            font-weight: 900;
+            color: var(--text-strong);
+            margin-bottom: 4px;
+            letter-spacing: -0.008em;
+        }
+
+        .timeline .step-desc {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        /* =========================================================
+   13. GUIDE BLOCKS
+   ========================================================= */
+        .guide-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+        }
+
+        .guide-block {
+            position: relative;
+            padding: 28px 26px;
+            border-radius: var(--radius);
+            background: linear-gradient(160deg,
+                    rgba(255, 255, 255, 0.96) 0%,
+                    rgba(255, 255, 255, 0.86) 60%,
+                    rgba(255, 255, 255, 0.92) 100%);
+            backdrop-filter: var(--blur-mid);
+            -webkit-backdrop-filter: var(--blur-mid);
+            border: 1px solid rgba(255, 255, 255, 0.92);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 20px rgba(31, 38, 135, 0.12),
+                0 18px 44px rgba(31, 38, 135, 0.10);
+            overflow: hidden;
+        }
+
+        .guide-block>h3 {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.20rem;
+            font-weight: 900;
+            margin-bottom: 6px;
+            color: var(--text-strong);
+            letter-spacing: -0.012em;
+        }
+
+        .guide-block>.sub {
+            position: relative;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-bottom: 22px;
+            font-weight: 500;
+        }
+
+        .item-list {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item {
+            position: relative;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.88));
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 2px 8px rgba(31, 38, 135, 0.06);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.3s ease,
+                background 0.3s ease;
+            overflow: hidden;
+        }
+
+        .item:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.96));
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 8px 22px rgba(31, 38, 135, 0.16),
+                0 16px 40px rgba(13, 148, 136, 0.12);
+        }
+
+        .item-ico {
+            position: relative;
+            flex-shrink: 0;
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            font-size: 1.28rem;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.85));
+            border: 1px solid rgba(255, 255, 255, 0.98);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 4px 12px rgba(13, 148, 136, 0.16);
+        }
+
+        .item-txt {
+            position: relative;
+        }
+
+        .item-txt strong {
+            display: block;
+            font-size: 0.94rem;
+            font-weight: 900;
+            color: var(--text-strong);
+            letter-spacing: -0.008em;
+        }
+
+        .item-txt span {
+            font-size: 0.81rem;
+            color: var(--text-sub);
+            line-height: 1.55;
+            font-weight: 500;
+        }
+
+        /* =========================================================
+   14. FOOTER
+   ========================================================= */
+        footer {
+            margin-top: 40px;
+            padding: 34px 0 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-inner {
+            position: relative;
+            padding: 30px clamp(20px, 4vw, 42px);
+            border-radius: 26px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.82) 100%);
+            backdrop-filter: var(--blur-mid);
+            -webkit-backdrop-filter: var(--blur-mid);
+            border: 1px solid rgba(255, 255, 255, 0.92);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 20px rgba(31, 38, 135, 0.10),
+                0 18px 44px rgba(31, 38, 135, 0.10);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .footer-inner p {
+            position: relative;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .footer-links {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .footer-links a {
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            padding: 0 18px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--text-sub);
+            text-decoration: none;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.88));
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 2px 8px rgba(31, 38, 135, 0.06);
+            transition: 0.28s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-strong);
+            transform: translateY(-3px);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 8px 20px rgba(31, 38, 135, 0.16);
+        }
+
+        /* =========================================================
+   15. REVEAL
+   ========================================================= */
+        .reveal {
+            opacity: 0;
+            transform: translateY(26px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================================
+   16. DETAIL MODAL
+   ========================================================= */
+        .detail-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.42);
+            backdrop-filter: blur(12px) saturate(150%);
+            -webkit-backdrop-filter: blur(12px) saturate(150%);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .detail-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .detail-panel {
+            position: relative;
+            width: min(720px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 30px;
+            transform: translateY(28px) scale(0.96);
+            transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
+            scrollbar-width: thin;
+            background: linear-gradient(160deg,
+                    rgba(255, 255, 255, 0.98) 0%,
+                    rgba(255, 255, 255, 0.94) 55%,
+                    rgba(255, 255, 255, 0.96) 100%);
+            backdrop-filter: var(--blur-ultra);
+            -webkit-backdrop-filter: var(--blur-ultra);
+            border: 1px solid rgba(255, 255, 255, 0.98);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 24px 64px rgba(31, 38, 135, 0.35),
+                0 48px 120px rgba(31, 38, 135, 0.24);
+            outline: none;
+        }
+
+        .detail-overlay.open .detail-panel {
+            transform: translateY(0) scale(1);
+        }
+
+        .detail-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .detail-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .detail-panel::-webkit-scrollbar-thumb {
+            background: rgba(15, 23, 42, 0.20);
+            border-radius: 4px;
+        }
+
+        .detail-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(15, 23, 42, 0.32);
+        }
+
+        .detail-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 10;
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.98);
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.88));
+            backdrop-filter: blur(14px) saturate(200%);
+            -webkit-backdrop-filter: blur(14px) saturate(200%);
+            color: var(--text-strong);
+            cursor: pointer;
+            transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.24s ease;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 6px 18px rgba(31, 38, 135, 0.24);
+        }
+
+        .detail-close:hover {
+            transform: scale(1.10) rotate(90deg);
+            background: #ffffff;
+        }
+
+        .detail-media {
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+            border-radius: 30px 30px 0 0;
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        }
+
+        .detail-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .detail-media-overlay {
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 65%;
+            background: linear-gradient(to top,
+                    rgba(0, 0, 0, 0.85) 0%,
+                    rgba(0, 0, 0, 0.5) 50%,
+                    transparent 100%);
+            pointer-events: none;
+        }
+
+        .detail-tag {
+            position: absolute;
+            left: 20px;
+            bottom: 18px;
+            z-index: 2;
+            padding: 8px 18px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.24);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 999px;
+            backdrop-filter: blur(14px) saturate(200%);
+            -webkit-backdrop-filter: blur(14px) saturate(200%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                0 4px 14px rgba(0, 0, 0, 0.32);
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+        }
+
+        .detail-body {
+            padding: 28px 30px 32px;
+        }
+
+        .detail-title {
+            font-size: clamp(1.3rem, 3vw, 1.75rem);
+            font-weight: 900;
+            color: var(--text-strong);
+            letter-spacing: -0.024em;
+            line-height: 1.25;
+            margin-bottom: 6px;
+        }
+
+        .detail-area {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .detail-section-title {
+            font-size: 0.82rem;
+            font-weight: 900;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            color: #0a7a6e;
+            margin-bottom: 10px;
+        }
+
+        .detail-desc,
+        .detail-time {
+            font-size: 0.96rem;
+            color: var(--text-sub);
+            line-height: 1.7;
+            font-weight: 500;
+        }
+
+        .detail-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .detail-features li {
+            position: relative;
+            padding-left: 28px;
+            font-size: 0.93rem;
+            color: var(--text-sub);
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .detail-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: 900;
+            color: #ffffff;
+            background: linear-gradient(135deg, #0d9488, #16a34a);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 0.72rem;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                0 2px 8px rgba(13, 148, 136, 0.38);
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(15, 23, 42, 0.12);
+        }
+
+        .detail-actions .btn {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        /* Ghi chú nguồn ảnh trong modal */
+        .detail-source {
+            margin-top: 20px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.08), rgba(22, 163, 74, 0.06));
+            border: 1px dashed rgba(13, 148, 136, 0.35);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #0a7a6e;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.01em;
+        }
+
+        .detail-source .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0d9488, #16a34a);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18);
+            flex-shrink: 0;
+        }
+
+        /* =========================================================
+   17. RESPONSIVE
+   ========================================================= */
+        @media (max-width: 1100px) {
+            .nav-links a {
+                padding: 9px 12px;
+                font-size: 0.85rem;
+            }
+
+            .home-return-btn span {
+                display: none;
+            }
+
+            .home-return-btn {
+                padding: 0;
+                width: 42px;
+            }
+
+            .home-return-btn svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .guide-cols {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Tablet: giữ 3 cột, thu nhỏ khoảng cách */
+        @media (max-width: 900px) {
+            .hero-stats {
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 20px 12px;
+            }
+
+            .stat-value {
+                font-size: 1.35rem;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            body {
+                padding-bottom: 100px;
+            }
+
+            .bg-image {
+                background-attachment: scroll;
+            }
+
+            .bg-overlay {
+                backdrop-filter: blur(2px);
+                -webkit-backdrop-filter: blur(2px);
+            }
+
+            .glass,
+            .glass-strong,
+            .glass-soft {
+                backdrop-filter: blur(20px) saturate(200%) brightness(1.06);
+                -webkit-backdrop-filter: blur(20px) saturate(200%) brightness(1.06);
+            }
+
+            .navbar {
+                top: 10px;
+                width: calc(100% - 20px);
+                padding: 8px 10px 8px 10px;
+                border-radius: 20px;
+                gap: 8px;
+            }
+
+            .navbar-left {
+                gap: 8px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .nav-cta {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .home-return-btn {
+                padding: 0;
+                width: 42px;
+                min-height: 42px;
+                border-radius: 14px;
+            }
+
+            .home-return-btn span {
+                display: none;
+            }
+
+            .brand-logo {
+                width: 38px;
+                height: 38px;
+                font-size: 1.1rem;
+                border-radius: 12px;
+            }
+
+            .brand-text strong {
+                font-size: 0.92rem;
+            }
+
+            .drawer {
+                display: block;
+            }
+
+            .bottom-nav {
+                display: block;
+            }
+
+            .hero {
+                padding-top: 96px;
+                padding-bottom: 32px;
+            }
+
+            .hero-inner {
+                padding: 32px 12px;
+                border-radius: 26px;
+            }
+
+            .hero-badge {
+                font-size: 0.68rem;
+                padding: 7px 14px;
+            }
+
+            /* Trên mobile: 3 card xếp dọc, mỗi card là 1 hàng ngang gọn */
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .stat-card {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                text-align: left;
+                padding: 16px 20px;
+            }
+
+            .stat-value {
+                font-size: 1.32rem;
+                min-width: 110px;
+            }
+
+            .stat-label {
+                margin-top: 0;
+                font-size: 0.80rem;
+            }
+
+            .search-wrap {
+                padding: 6px 6px 6px 18px;
+            }
+
+            .search-wrap .btn {
+                padding: 0 18px;
+                font-size: 0.85rem;
+            }
+
+            section {
+                padding: 48px 0;
+            }
+
+            .filter-bar {
+                border-radius: 20px;
+                padding: 10px;
+                gap: 8px;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x proximity;
+            }
+
+            .chip {
+                scroll-snap-align: start;
+                padding: 0 18px;
+                font-size: 0.83rem;
+                min-height: 44px;
+            }
+
+            .dest-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .card-media {
+                height: 210px;
+            }
+
+            .card-body {
+                padding: 18px 18px 20px;
+            }
+
+            .routes-grid {
+                display: flex;
+                grid-template-columns: none;
+                overflow-x: auto;
+                gap: 14px;
+                padding: 4px 16px 20px;
+                margin-inline: -16px;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .routes-grid::-webkit-scrollbar {
+                display: none;
+            }
+
+            .route-card {
+                flex: 0 0 86%;
+                scroll-snap-align: center;
+                padding: 24px 22px;
+            }
+
+            .guide-block {
+                padding: 24px 20px;
+            }
+
+            .item {
+                padding: 13px 14px;
+            }
+
+            footer {
+                padding-bottom: 20px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            .detail-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .detail-panel {
+                width: 100%;
+                max-height: 92dvh;
+                border-radius: 30px 30px 0 0;
+                transform: translateY(100%);
+            }
+
+            .detail-overlay.open .detail-panel {
+                transform: translateY(0);
+            }
+
+            .detail-media {
+                height: 240px;
+                border-radius: 30px 30px 0 0;
+            }
+
+            .detail-body {
+                padding: 24px 22px 36px;
+            }
+
+            .detail-actions {
+                flex-direction: column;
+            }
+
+            .detail-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .brand-text span {
+                display: none;
+            }
+
+            .stat-value {
+                min-width: 96px;
+                font-size: 1.18rem;
+            }
+
+            .route-card {
+                flex: 0 0 92%;
+            }
+
+            .home-return-btn {
+                width: 40px;
+                min-height: 40px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.001ms !important;
+                transition-duration: 0.001ms !important;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NỀN -->
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+    <div class="bg-tint"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-left">
+            <a href="https://disanthainguyen.pages.dev/" class="home-return-btn" aria-label="Quay về trang chủ"
+                title="Quay về trang chủ">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12l9-9 9 9" />
+                    <path d="M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10" />
+                </svg>
+                <span>Trang chủ</span>
+            </a>
+
+            <a href="#top" class="brand">
+                <div class="brand-logo">🍃</div>
+                <div class="brand-text">
+                    <strong>Thái Nguyên Travel</strong>
+                    <span>Cẩm nang du lịch</span>
+                </div>
+            </a>
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="#top" class="active">Trang chủ</a></li>
+            <li><a href="#diem-den">Điểm đến</a></li>
+            <li><a href="#tuyen-di">Tuyến du lịch</a></li>
+            <li><a href="#cam-nang">Ẩm thực &amp; Lưu trú</a></li>
+        </ul>
+
+        <div class="navbar-right">
+            <button class="hamburger" id="hamburger" aria-label="Mở menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- DRAWER -->
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+    <aside class="drawer" id="drawer" aria-hidden="true">
+        <ul>
+            <li><a href="#top">🏠 Trang chủ</a></li>
+            <li><a href="#diem-den">📍 Top 10 điểm đến</a></li>
+            <li><a href="#tuyen-di">🧭 Tuyến du lịch chủ đề</a></li>
+            <li><a href="#cam-nang">🍜 Ẩm thực &amp; Lưu trú</a></li>
+            <li><a href="https://disanthainguyen.pages.dev/">↩️ Quay về Trang chủ web</a></li>
+        </ul>
+    </aside>
+
+    <!-- HERO -->
+    <header class="hero" id="top">
+        <div class="container">
+            <div class="hero-inner">
+                <span class="hero-badge">✦ Thái Nguyên</span>
+
+                <h1>
+                    <span class="line-1">Thái Nguyên Travel</span>
+                    <span class="grad">Từ Đồi Chè Xanh Đến Hồ Ba Bể</span>
+                </h1>
+
+                <p class="hero-desc">
+                    Hành trình xuyên qua những đồi chè bạt ngàn, hồ nước trong xanh và miền di sản
+                    cách mạng — nơi thiên nhiên, văn hóa và lịch sử hòa quyện trong một cẩm nang du lịch duy nhất.
+                </p>
+
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">8.375,21 km²</div>
+                        <div class="stat-label">Diện tích tự nhiên</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">1,8 triệu</div>
+                        <div class="stat-label">Dân số toàn vùng</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">92</div>
+                        <div class="stat-label">Đơn vị hành chính cấp xã<br>(77 xã, 15 phường)</div>
+                    </div>
+                </div>
+
+                <form class="search-wrap" id="searchForm" role="search" onsubmit="return false;">
+                    <span class="ico">🔍</span>
+                    <input type="search" id="searchInput" placeholder="Tìm điểm đến... (VD: Ba Bể, Tân Cương, ATK)"
+                        aria-label="Tìm kiếm điểm đến" />
+                    <button class="btn btn-accent" type="submit" id="searchBtn">Tìm</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <!-- MỤC 1 -->
+    <section id="diem-den">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="section-eyebrow">Top 10 · Đáng đến nhất</span>
+                <h2 class="section-title">Khám phá 10 điểm đến hàng đầu</h2>
+                <p class="section-sub">
+                    Những điểm đến được du khách yêu thích nhất tại Thái Nguyên.
+                    Nhấn vào từng thẻ để xem đặc điểm, trải nghiệm nổi bật, thời điểm lý tưởng và bản đồ.
+                </p>
+            </div>
+
+            <div class="filter-bar" id="filterBar" role="tablist" aria-label="Bộ lọc điểm đến"></div>
+            <div class="dest-grid" id="destGrid"></div>
+        </div>
+    </section>
+
+    <!-- MỤC 2 -->
+    <section id="tuyen-di">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="section-eyebrow">Hành trình gợi ý</span>
+                <h2 class="section-title">Tuyến du lịch theo chủ đề</h2>
+                <p class="section-sub">
+                    Ba tuyến hành trình được thiết kế sẵn với lộ trình từng bước rõ ràng —
+                    chỉ cần chọn tuyến, xách ba lô và lên đường.
+                </p>
+            </div>
+
+            <div class="routes-grid">
+
+                <article class="route-card reveal">
+                    <div class="route-head">
+                        <div class="route-icon">🌿</div>
+                        <div>
+                            <h3>Tuyến Sinh thái &amp; Cảnh quan</h3>
+                            <p>4 trạm · ~3 ngày 2 đêm · Phù hợp gia đình &amp; nhóm bạn</p>
+                        </div>
+                    </div>
+                    <ol class="timeline">
+                        <li>
+                            <div class="step-title">Trạm 1 — Đồi chè Tân Cương</div>
+                            <div class="step-desc">Khởi hành từ TP. Thái Nguyên, tham quan đồi chè, thưởng trà và chụp
+                                ảnh hoàng hôn.</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Trạm 2 — Hồ Núi Cốc</div>
+                            <div class="step-desc">Du thuyền trên hồ, ghé đền thờ công chúa Mỵ Nương và khu du lịch sinh
+                                thái ven hồ.</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Trạm 3 — Hang Phượng Hoàng</div>
+                            <div class="step-desc">Khám phá hệ thống hang động đá vôi kỳ vĩ, kết hợp suối Mỏ Gà và thác
+                                nước.</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Trạm 4 — Hồ Ba Bể</div>
+                            <div class="step-desc">Đi thuyền xuyên hồ, thăm đảo Bà Góa, động Puông và nghỉ đêm tại
+                                homestay bản Pác Ngòi.</div>
+                        </li>
+                    </ol>
+                </article>
+
+                <article class="route-card reveal">
+                    <div class="route-head">
+                        <div class="route-icon">🏛️</div>
+                        <div>
+                            <h3>Tuyến Lịch sử &amp; Nguồn cội</h3>
+                            <p>3 trạm · ~2 ngày 1 đêm · Phù hợp học sinh, đoàn thể</p>
+                        </div>
+                    </div>
+                    <ol class="timeline">
+                        <li>
+                            <div class="step-title">Trạm 1 — ATK Định Hóa</div>
+                            <div class="step-desc">Thăm nhà tưởng niệm Bác Hồ, đồi Tỉn Keo, Khuôn Tát — trung tâm căn cứ
+                                địa Việt Bắc.</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Trạm 2 — ATK Chợ Đồn</div>
+                            <div class="step-desc">Di tích lịch sử cách mạng, nơi ghi dấu nhiều sự kiện quan trọng thời
+                                kỳ kháng chiến.</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Trạm 3 — Trung tâm đô thị</div>
+                            <div class="step-desc">Trở về TP. Thái Nguyên, thăm Bảo tàng Văn hóa các dân tộc và quảng
+                                trường trung tâm.</div>
+                        </li>
+                    </ol>
+                </article>
+
+                <article class="route-card reveal">
+                    <div class="route-head">
+                        <div class="route-icon">🏡</div>
+                        <div>
+                            <h3>Tuyến Văn hóa &amp; Bản làng</h3>
+                            <p>3 trạm · ~3 ngày 2 đêm · Trải nghiệm bản địa sâu sắc</p>
+                        </div>
+                    </div>
+                    <ol class="timeline">
+                        <li>
+                            <div class="step-title">Trạm 1 — Na Rì</div>
+                            <div class="step-desc">Giao lưu văn hóa dân tộc Tày – Nùng, thưởng thức miến đao và các làn
+                                điệu Then, Sli.</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Trạm 2 — Ngân Sơn</div>
+                            <div class="step-desc">Chợ phiên vùng cao, tìm hiểu nghề dệt thổ cẩm và ẩm thực bản địa đặc
+                                trưng.</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Trạm 3 — Bạch Thông</div>
+                            <div class="step-desc">Nghỉ homestay nhà sàn, đêm lửa trại và thưởng thức rượu ngô men lá
+                                cùng người dân.</div>
+                        </li>
+                    </ol>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- MỤC 3 -->
+    <section id="cam-nang">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="section-eyebrow">Cẩm nang</span>
+                <h2 class="section-title">Lưu trú &amp; Ẩm thực</h2>
+                <p class="section-sub">
+                    Ăn gì, ở đâu khi đến Thái Nguyên? Dưới đây là những đặc sản
+                    và lựa chọn lưu trú được du khách yêu thích nhất.
+                </p>
+            </div>
+
+            <div class="guide-cols">
+                <div class="guide-block reveal">
+                    <h3>🍜 Ẩm thực đặc sản</h3>
+                    <p class="sub">Sáu hương vị nhất định phải thử khi ghé vùng Việt Bắc.</p>
+
+                    <div class="item-list">
+                        <div class="item">
+                            <div class="item-ico">🍵</div>
+                            <div class="item-txt">
+                                <strong>Trà Tân Cương</strong>
+                                <span>"Đệ nhất danh trà" — hương cốm non, vị chát ngọt hậu kéo dài.</span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="item-ico">🐟</div>
+                            <div class="item-txt">
+                                <strong>Cá nướng Hồ Ba Bể</strong>
+                                <span>Cá mương kẹp nẹp trúc nướng giòn, chấm muối ớt măng chua.</span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="item-ico">🍲</div>
+                            <div class="item-txt">
+                                <strong>Miến dong Na Rì</strong>
+                                <span>Sợi miến dẻo dai, trong suốt từ củ dong riềng đỏ, không bị nát khi nấu lại.</span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="item-ico">🫒</div>
+                            <div class="item-txt">
+                                <strong>Nham trám Hà Châu</strong>
+                                <span>Trám đen om mềm, thịt ba chỉ nướng, gỏi cá nheo, vừng lạc và lá kinh giới.</span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="item-ico">🥟</div>
+                            <div class="item-txt">
+                                <strong>Bánh chưng Bờ Đậu</strong>
+                                <span>Dẻo thơm nhờ gạo nếp nương Phú Lương và nguồn nước suối Bờ Đậu.</span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="item-ico">🥩</div>
+                            <div class="item-txt">
+                                <strong>Lợn quay lá mắc mật</strong>
+                                <span>Bì giòn rụm, thịt đượm hương thơm mát của lá và quả mắc mật.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="guide-block reveal">
+                    <h3>🏡 Lưu trú &amp; Nghỉ dưỡng</h3>
+                    <p class="sub">Từ homestay bản địa đến khách sạn trung tâm — chọn theo phong cách của bạn.</p>
+
+                    <div class="item-list">
+                        <div class="item">
+                            <div class="item-ico">🛖</div>
+                            <div class="item-txt">
+                                <strong>Homestay bản địa — xã Ba Bể</strong>
+                                <span>Nhà sàn ven hồ, view núi đá vôi, ăn cơm cùng gia đình người Tày.</span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="item-ico">🌄</div>
+                            <div class="item-txt">
+                                <strong>Homestay — xã Chợ Đồn</strong>
+                                <span>Không gian yên tĩnh giữa rừng, phù hợp nghỉ dưỡng và trekking ngắn ngày.</span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="item-ico">🏨</div>
+                            <div class="item-txt">
+                                <strong>Khách sạn trung tâm — P. Phan Đình Phùng</strong>
+                                <span>Vị trí trung tâm TP. Thái Nguyên, thuận tiện di chuyển và mua sắm.</span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="item-ico">🏢</div>
+                            <div class="item-txt">
+                                <strong>Khách sạn — P. Quyết Thắng &amp; P. Bắc Kạn</strong>
+                                <span>Nhiều lựa chọn từ 3–5 sao, đầy đủ tiện nghi cho gia đình và đoàn công tác.</span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <div class="item-ico">🛏️</div>
+                            <div class="item-txt">
+                                <strong>Bản Pác Ngòi — xã Ba Bể</strong>
+                                <span>Hàng chục nhà sàn cổ nguyên vẹn, view hồ đẹp nhất về đêm và bình minh.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="lien-he">
+        <div class="container">
+            <div class="footer-inner">
+                <div>
+                    <p style="font-weight:900;color:var(--text-strong);font-size:1rem;margin-bottom:4px;">
+                        🍃 Thái Nguyên Travel — Cẩm Nang Du Lịch
+                    </p>
+                    <p>Đồng hành cùng bạn trên mọi nẻo đường Việt Bắc.</p>
+                    <p style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">Nguồn ảnh: Internet</p>
+                </div>
+                <nav class="footer-links">
+                    <a href="#diem-den">Điểm đến</a>
+                    <a href="#tuyen-di">Tuyến du lịch</a>
+                    <a href="#cam-nang">Ẩm thực</a>
+                    <a href="https://disanthainguyen.pages.dev/">Trang chủ</a>
+                    <a href="#top">Về đầu trang</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav" id="bottomNav" aria-label="Điều hướng nhanh">
+        <ul>
+            <li><a href="#top" class="active"><span class="ico">🏠</span>Trang chủ</a></li>
+            <li><a href="#diem-den"><span class="ico">📍</span>Điểm đến</a></li>
+            <li><a href="#tuyen-di"><span class="ico">🧭</span>Tuyến đi</a></li>
+            <li><a href="#cam-nang"><span class="ico">🍜</span>Cẩm nang</a></li>
+        </ul>
+    </nav>
+
+    <!-- MODAL CHI TIẾT -->
+    <div class="detail-overlay" id="detailOverlay" aria-hidden="true">
+        <div class="detail-panel" id="detailPanel" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+
+            <button class="detail-close" id="detailClose" aria-label="Đóng chi tiết">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <div class="detail-media">
+                <img id="detailImage" src="" alt="" loading="lazy" />
+                <div class="detail-media-overlay"></div>
+                <span class="detail-tag" id="detailTag"></span>
+            </div>
+
+            <div class="detail-body">
+                <h2 class="detail-title" id="detailTitle"></h2>
+                <p class="detail-area" id="detailArea"></p>
+
+                <div class="detail-section">
+                    <h4 class="detail-section-title">📖 Đặc điểm</h4>
+                    <p class="detail-desc" id="detailDesc"></p>
+                </div>
+
+                <div class="detail-section">
+                    <h4 class="detail-section-title">✨ Trải nghiệm nổi bật</h4>
+                    <ul class="detail-features" id="detailFeatures"></ul>
+                </div>
+
+                <div class="detail-section">
+                    <h4 class="detail-section-title">📅 Thời điểm lý tưởng để ghé thăm</h4>
+                    <p class="detail-time" id="detailTime"></p>
+                </div>
+
+                <div class="detail-source">
+                    <span class="dot"></span>
+                    Nguồn ảnh: Internet
+                </div>
+
+                <div class="detail-actions">
+                    <a href="#" target="_blank" rel="noopener" class="btn btn-accent" id="detailMapBtn">
+                        📍 Mở trên Google Maps
+                    </a>
+                    <button class="btn" id="detailBackBtn">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================================================
+           THÁI NGUYÊN TRAVEL — SCRIPT
+           ========================================================================= */
+
+        /* ---------- Danh sách 10 điểm đến ---------- */
+        const DESTINATIONS = [
+            {
+                name: 'Hồ Ba Bể',
+                cat: 'babe',
+                img: 'pic/ho-ba-be.png',
+                tag: 'Sinh thái',
+                area: 'Xã Ba Bể, tỉnh Thái Nguyên',
+                star: '5.0',
+                desc: 'Top 20 hồ nước ngọt tự nhiên trên núi đá vôi lớn nhất thế giới, thuộc Vườn quốc gia Ba Bể.'
+            },
+            {
+                name: 'Đồi chè Tân Cương',
+                cat: 'tancuong',
+                img: 'pic/doi-che-tan-cuong.png',
+                tag: 'Vùng chè',
+                area: 'Xã Tân Cương, tỉnh Thái Nguyên',
+                star: '4.9',
+                desc: '"Thủ phủ trà" trứ danh với những luống chè xanh mướt ngút ngàn.'
+            },
+            {
+                name: 'Khu du lịch Hồ Núi Cốc',
+                cat: 'babe',
+                img: 'pic/ho-nui-coc.png',
+                tag: 'Sinh thái',
+                area: 'Xã Đại Phúc, tỉnh Thái Nguyên',
+                star: '4.8',
+                desc: 'Hồ nước huyền thoại gắn liền với thiên tình sử Chàng Cốc – Nàng Công.'
+            },
+            {
+                name: 'Khu di tích lịch sử Quốc gia đặc biệt ATK Định Hóa',
+                cat: 'atk',
+                img: 'pic/atk-dinh-hoa.png',
+                tag: 'Di tích',
+                area: 'Xã Phú Đình, tỉnh Thái Nguyên',
+                star: '4.9',
+                desc: 'Trung tâm căn cứ địa cách mạng "Thủ đô gió ngàn" thời kỳ kháng chiến chống Pháp.'
+            },
+            {
+                name: 'Quần thể Hang Phượng Hoàng & Suối Mỏ Gà',
+                cat: 'babe',
+                img: 'pic/hang-phuong-hoang.png',
+                tag: 'Danh thắng',
+                area: 'Xã Võ Nhai, tỉnh Thái Nguyên',
+                star: '4.8',
+                desc: 'Danh thắng thiên nhiên nổi tiếng với động đá vôi độc đáo và dòng suối ngầm trong mát.'
+            },
+            {
+                name: 'Suối Cửa Tử',
+                cat: 'babe',
+                img: 'pic/suoi-cua-tu.png',
+                tag: 'Danh thắng',
+                area: 'Xã La Bằng, tỉnh Thái Nguyên',
+                star: '4.7',
+                desc: 'Dòng suối hoang sơ trải dài qua các khe núi trùng điệp thuộc dãy Tam Đảo.'
+            },
+            {
+                name: 'Động Puông',
+                cat: 'babe',
+                img: 'pic/dong-puong.png',
+                tag: 'Sinh thái',
+                area: 'Xã Ba Bể, tỉnh Thái Nguyên',
+                star: '4.8',
+                desc: 'Hang động tự nhiên dài hơn 300m đâm xuyên qua lòng núi đá vôi Lũng Nham, nơi dòng sông Năng chảy qua.'
+            },
+            {
+                name: 'Bảo tàng Văn hóa các dân tộc Việt Nam',
+                cat: 'city',
+                img: 'pic/bao-tang-van-hoa.png',
+                tag: 'Bảo tàng',
+                area: 'P. Phan Đình Phùng, tỉnh Thái Nguyên',
+                star: '4.8',
+                desc: 'Một trong những bảo tàng cấp quốc gia quy mô lớn nhất Việt Nam chuyên về văn hóa các tộc người.'
+            },
+            {
+                name: 'Chùa Hang',
+                cat: 'atk',
+                img: 'pic/chua-hang.png',
+                tag: 'Di tích',
+                area: 'Xã Linh Sơn, tỉnh Thái Nguyên',
+                star: '4.7',
+                desc: 'Ngôi chùa cổ độc đáo nằm trọn trong lòng ba ngọn núi đá vôi hùng vĩ (Kim Sơn).'
+            },
+            {
+                name: 'Bản văn hóa Pác Ngòi',
+                cat: 'babe',
+                img: 'pic/ban-pac-ngoi.png',
+                tag: 'Bản làng',
+                area: 'Xã Ba Bể, tỉnh Thái Nguyên',
+                star: '4.9',
+                desc: 'Bản du lịch cộng đồng người Tày nằm ven bờ hồ Ba Bể với hàng chục ngôi nhà sàn cổ nguyên vẹn.'
+            }
+        ];
+
+        /* ---------- Dữ liệu chi tiết ---------- */
+        const DETAIL_DATA = {
+            'Hồ Ba Bể': {
+                features: [
+                    'Chèo thuyền kayak trên hồ nước ngọc bích',
+                    'Đi thuyền máy ngắm cảnh hồ, ghé thăm Đảo Bà Góa và Ao Tiên',
+                    'Khám phá động Puông với hàng ngàn con dơi',
+                    'Nghỉ homestay nhà sàn tại bản Pác Ngòi'
+                ],
+                time: 'Tháng 3 – 5 và tháng 9 – 11. Thời tiết mát mẻ, cảnh sắc rực rỡ nhất. Mùa hè (5–8) cũng rất thích hợp để tránh nóng và bơi thuyền.',
+                map: 'https://www.google.com/maps/search/?api=1&query=H%E1%BB%93+Ba+B%E1%BB%83'
+            },
+            'Đồi chè Tân Cương': {
+                features: [
+                    'Chụp ảnh check-in với những luống chè xanh mướt',
+                    'Trải nghiệm hái chè cùng người dân địa phương',
+                    'Thưởng thức trà nóng hổi ngay tại đồi',
+                    'Tìm hiểu quy trình chế biến trà truyền thống'
+                ],
+                time: 'Tháng 4 – 6 (mùa hè) là đẹp nhất cho ảnh check-in. Buổi sáng sớm 6h–7h không khí mát mẻ, sương còn đọng trên lá chè.',
+                map: 'https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BB%93i+ch%C3%A8+T%C3%A2n+C%C6%B0%C6%A1ng'
+            },
+            'Khu du lịch Hồ Núi Cốc': {
+                features: [
+                    'Đi du thuyền quanh lòng hồ ngắm cảnh sơn thủy hữu tình',
+                    'Tham quan công viên nước và múa nhạc nước',
+                    'Dạo chơi các động nhân tạo và đền thờ công chúa Mỵ Nương',
+                    'Khám phá đảo Cò, đảo Khỉ và hệ thống tiểu cảnh'
+                ],
+                time: 'Tháng 3 – 5 và tháng 9 – 11. Thời tiết mát mẻ, thuận lợi cho du thuyền và dạo chơi ngoài trời.',
+                map: 'https://www.google.com/maps/search/?api=1&query=H%E1%BB%93+N%C3%BAi+C%E1%BB%91c'
+            },
+            'Khu di tích lịch sử Quốc gia đặc biệt ATK Định Hóa': {
+                features: [
+                    'Dâng hương tại Đền thờ Bác Hồ trên đỉnh đèo De',
+                    'Thăm đồi Tỉn Keo và nhà sàn Bác Hồ',
+                    'Tìm hiểu lịch sử căn cứ địa cách mạng "Thủ đô gió ngàn"',
+                    'Tham gia lễ hội Lồng tồng đầu xuân (mùng 9–10 tháng Giêng)'
+                ],
+                time: 'Quanh năm, đẹp nhất vào mùa xuân (tháng 1–3) khi lễ hội Lồng tồng diễn ra. Mùa thu thời tiết cũng rất dễ chịu.',
+                map: 'https://www.google.com/maps/search/?api=1&query=ATK+%C4%90%E1%BB%8Bnh+H%C3%B3a'
+            },
+            'Quần thể Hang Phượng Hoàng & Suối Mỏ Gà': {
+                features: [
+                    'Leo núi chinh phục Hang Phượng Hoàng ngắm thạch nhũ',
+                    'Tắm suối Mỏ Gà mát lạnh',
+                    'Khám phá 3 tầng hang động: hang Dơi, hang Sáng, hang Tối',
+                    'Picnic và dã ngoại bên dòng suối'
+                ],
+                time: 'Tháng 4 – 9. Thời tiết khô ráo, thuận lợi cho leo núi và tắm suối. Mùa hè nước suối mát lạnh.',
+                map: 'https://www.google.com/maps/search/?api=1&query=Hang+Ph%C6%B0%E1%BB%A3ng+Ho%C3%A0ng+V%C3%B5+Nhai'
+            },
+            'Suối Cửa Tử': {
+                features: [
+                    'Trekking mạo hiểm qua các cửa suối',
+                    'Tắm thác nước trong vắt',
+                    'Đu dây trượt nước (tại Cửa Tử 1)',
+                    'Picnic, dã ngoại bên dòng suối hoang sơ'
+                ],
+                time: 'Mùa nào cũng đẹp. Mùa hè nước xanh trong vắt, mùa thu lá vàng rơi. Tháng 9–11 là thời điểm lý tưởng cho trekking.',
+                map: 'https://www.google.com/maps/search/?api=1&query=Su%E1%BB%91i+C%E1%BB%ADa+T%E1%BB%AD+La+B%E1%BA%B1ng'
+            },
+            'Động Puông': {
+                features: [
+                    'Đi thuyền xuyên qua lòng hang dài hơn 300m',
+                    'Ngắm vô số đàn dơi đu mình trên vách đá',
+                    'Chiêm ngưỡng thạch nhũ rủ xuống kỳ ảo',
+                    'Tìm hiểu hệ sinh thái Vườn quốc gia Ba Bể'
+                ],
+                time: 'Tháng 5 – 9. Không khí trong lành, mát mẻ. Có thể tham quan quanh năm nhưng mùa hè là đẹp nhất.',
+                map: 'https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BB%99ng+Pu%C3%B4ng+Ba+B%E1%BB%83'
+            },
+            'Bảo tàng Văn hóa các dân tộc Việt Nam': {
+                features: [
+                    'Chiêm ngưỡng hàng nghìn hiện vật, trang phục, công cụ lao động',
+                    'Khám phá mô hình kiến trúc nhà ở của 54 dân tộc anh em',
+                    'Tham quan khu trưng bày ngoài trời với 6 vùng văn hóa',
+                    'Trải nghiệm hệ thống thuyết minh tự động (audioguide)'
+                ],
+                time: 'Quanh năm. Giờ mở cửa: 7:30 – 11:30 và 13:30 – 17:00 (thứ 2 – thứ 6). Nên đi buổi sáng để có nhiều thời gian tham quan.',
+                map: 'https://www.google.com/maps/search/?api=1&query=B%E1%BA%A3o+t%C3%A0ng+V%C4%83n+h%C3%B3a+c%C3%A1c+d%C3%A2n+t%E1%BB%99c+Vi%E1%BB%87t+Nam+Th%C3%A1i+Nguy%C3%AAn'
+            },
+            'Chùa Hang': {
+                features: [
+                    'Vãn cảnh chùa tĩnh mịch trong lòng núi đá vôi',
+                    'Chiêm bái Phật trong hang đá',
+                    'Tham gia các lễ hội xuân truyền thống',
+                    'Tìm hiểu kiến trúc độc đáo của ngôi chùa cổ'
+                ],
+                time: 'Quanh năm. Đẹp nhất vào dịp lễ hội chùa Hang (19–21 tháng Giêng âm lịch). Mùa hè trong chùa mát mẻ, mùa đông ấm áp.',
+                map: 'https://www.google.com/maps/search/?api=1&query=Ch%C3%B9a+Hang+Linh+S%C6%A1n'
+            },
+            'Bản văn hóa Pác Ngòi': {
+                features: [
+                    'Ở homestay nhà sàn cổ của người Tày',
+                    'Thưởng thức điệu hát Then – đàn Tính',
+                    'Trải nghiệm đời sống sinh hoạt dân dã cùng đồng bào',
+                    'Đi bộ khám phá bản làng và cảnh quan ven hồ'
+                ],
+                time: 'Tháng 3 – 5 và tháng 9 – 11. Thời tiết mát mẻ, thuận lợi cho các hoạt động ngoài trời và nghỉ homestay.',
+                map: 'https://www.google.com/maps/search/?api=1&query=B%E1%BA%A3n+P%C3%A1c+Ng%C3%B2i+Ba+B%E1%BB%83'
+            }
+        };
+
+        const FILTERS = [
+            { key: 'all', label: 'Tất cả', icon: '✨' },
+            { key: 'babe', label: 'Sinh thái', icon: '🌊' },
+            { key: 'tancuong', label: 'Vùng Chè Tân Cương', icon: '🍵' },
+            { key: 'atk', label: 'Di tích & ATK', icon: '🏛️' },
+            { key: 'city', label: 'Bảo tàng', icon: '🏙️' }
+        ];
+
+        let currentFilter = 'all';
+        let currentKeyword = '';
+
+        const filterBar = document.getElementById('filterBar');
+        const destGrid = document.getElementById('destGrid');
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const hamburger = document.getElementById('hamburger');
+        const drawer = document.getElementById('drawer');
+        const drawerBd = document.getElementById('drawerBackdrop');
+
+        const detailOverlay = document.getElementById('detailOverlay');
+        const detailPanel = document.getElementById('detailPanel');
+        const detailClose = document.getElementById('detailClose');
+        const detailImage = document.getElementById('detailImage');
+        const detailTag = document.getElementById('detailTag');
+        const detailTitle = document.getElementById('detailTitle');
+        const detailArea = document.getElementById('detailArea');
+        const detailDesc = document.getElementById('detailDesc');
+        const detailTime = document.getElementById('detailTime');
+        const detailFeatures = document.getElementById('detailFeatures');
+        const detailMapBtn = document.getElementById('detailMapBtn');
+        const detailBackBtn = document.getElementById('detailBackBtn');
+
+        function renderFilters() {
+            filterBar.innerHTML = FILTERS.map(f => `
+    <button
+      class="chip ${f.key === currentFilter ? 'active' : ''}"
+      data-filter="${f.key}"
+      role="tab"
+      aria-selected="${f.key === currentFilter}"
+    >
+      <span>${f.icon}</span>${f.label}
+    </button>
+  `).join('');
+
+            filterBar.querySelectorAll('.chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    currentFilter = chip.dataset.filter;
+                    renderFilters();
+                    renderDestinations();
+                });
+            });
+        }
+
+        function renderDestinations() {
+            const kw = currentKeyword.trim().toLowerCase();
+
+            const list = DESTINATIONS.filter(d => {
+                const matchCat = currentFilter === 'all' || d.cat === currentFilter;
+                const matchKw = !kw
+                    || d.name.toLowerCase().includes(kw)
+                    || d.desc.toLowerCase().includes(kw)
+                    || d.area.toLowerCase().includes(kw)
+                    || d.tag.toLowerCase().includes(kw);
+                return matchCat && matchKw;
+            });
+
+            if (list.length === 0) {
+                destGrid.innerHTML = `
+      <div class="empty-state">
+        <span class="emoji">🔍</span>
+        <p>Không tìm thấy điểm đến phù hợp với "<strong>${escapeHtml(currentKeyword)}</strong>".<br>Hãy thử từ khóa khác như "Ba Bể", "Tân Cương" hoặc "ATK".</p>
+      </div>`;
+                return;
+            }
+
+            destGrid.innerHTML = list.map((d, i) => `
+    <article class="card reveal" style="transition-delay:${Math.min(i * 45, 320)}ms" data-name="${escapeHtml(d.name)}">
+      <div class="card-media">
+        <img
+          src="${d.img}"
+          alt="${escapeHtml(d.name)}"
+          loading="lazy"
+          onerror="this.onerror=null;this.src='pic/tendisan1.png';"
+        />
+        <span class="card-tag">${d.tag}</span>
+      </div>
+      <div class="card-body">
+        <h3>${escapeHtml(d.name)}</h3>
+        <p>${escapeHtml(d.desc)}</p>
+        <div class="card-meta">
+          <span>📍 ${escapeHtml(d.area)}</span>
+          <span>⭐ ${d.star}</span>
+        </div>
+        <span class="card-cta">Xem chi tiết</span>
+      </div>
+    </article>
+  `).join('');
+
+            observeReveal();
+            bindCardClicks();
+        }
+
+        function bindCardClicks() {
+            document.querySelectorAll('.card').forEach(card => {
+                if (card.dataset.bound) return;
+                card.dataset.bound = 'true';
+
+                card.addEventListener('click', () => {
+                    const name = card.dataset.name;
+                    const dest = DESTINATIONS.find(d => d.name === name);
+                    if (dest) openDetail(dest);
+                });
+            });
+        }
+
+        function openDetail(dest) {
+            const extra = DETAIL_DATA[dest.name] || {};
+
+            detailImage.src = dest.img;
+            detailImage.alt = dest.name;
+            detailTag.textContent = dest.tag || '';
+            detailTitle.textContent = dest.name;
+            detailArea.textContent = '📍 ' + (dest.area || '');
+            detailDesc.textContent = dest.desc || 'Đang cập nhật thông tin...';
+
+            if (extra.features && extra.features.length) {
+                detailFeatures.innerHTML = extra.features.map(f => `<li>${f}</li>`).join('');
+            } else {
+                detailFeatures.innerHTML = '<li>Đang cập nhật trải nghiệm nổi bật...</li>';
+            }
+
+            detailTime.textContent = extra.time || 'Đang cập nhật thời điểm lý tưởng...';
+
+            if (extra.map) {
+                detailMapBtn.href = extra.map;
+            } else {
+                detailMapBtn.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(dest.name + ' ' + dest.area);
+            }
+            detailMapBtn.style.display = 'inline-flex';
+
+            detailOverlay.classList.add('open');
+            detailOverlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+
+            setTimeout(() => detailPanel.focus(), 100);
+        }
+
+        function closeDetail() {
+            detailOverlay.classList.remove('open');
+            detailOverlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        detailClose.addEventListener('click', closeDetail);
+        detailBackBtn.addEventListener('click', closeDetail);
+
+        detailOverlay.addEventListener('click', (e) => {
+            if (e.target === detailOverlay) closeDetail();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && detailOverlay.classList.contains('open')) closeDetail();
+        });
+
+        function doSearch() {
+            currentKeyword = searchInput.value;
+            renderDestinations();
+            document.getElementById('diem-den')
+                .scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        searchForm.addEventListener('submit', e => {
+            e.preventDefault();
+            doSearch();
+        });
+
+        let searchTimer = null;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                currentKeyword = searchInput.value;
+                renderDestinations();
+            }, 220);
+        });
+
+        function openDrawer() {
+            drawer.classList.add('open');
+            drawerBd.classList.add('open');
+            hamburger.classList.add('open');
+            hamburger.setAttribute('aria-expanded', 'true');
+            drawer.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            drawerBd.classList.remove('open');
+            hamburger.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
+            drawer.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        hamburger.addEventListener('click', () => {
+            drawer.classList.contains('open') ? closeDrawer() : openDrawer();
+        });
+        drawerBd.addEventListener('click', closeDrawer);
+
+        drawer.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', closeDrawer);
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeDrawer();
+        });
+
+        const spySections = ['top', 'diem-den', 'tuyen-di', 'cam-nang'];
+
+        function updateActiveNav() {
+            const scrollPos = window.scrollY + 160;
+            let activeId = 'top';
+
+            spySections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.offsetTop <= scrollPos) activeId = id;
+            });
+
+            document.querySelectorAll('.nav-links a').forEach(a => {
+                a.classList.toggle('active', a.getAttribute('href') === '#' + activeId);
+            });
+
+            document.querySelectorAll('.bottom-nav a').forEach(a => {
+                a.classList.toggle('active', a.getAttribute('href') === '#' + activeId);
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+        let revealObserver = null;
+
+        function observeReveal() {
+            const items = document.querySelectorAll('.reveal:not(.visible)');
+
+            if (!('IntersectionObserver' in window)) {
+                items.forEach(el => el.classList.add('visible'));
+                return;
+            }
+
+            if (!revealObserver) {
+                revealObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            revealObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+            }
+
+            items.forEach(el => revealObserver.observe(el));
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        (function init() {
+            renderFilters();
+            renderDestinations();
+            observeReveal();
+            updateActiveNav();
+        })();
+    </script>
+
+</body>
+
+</html>
